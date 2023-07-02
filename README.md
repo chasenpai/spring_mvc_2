@@ -1,1 +1,1 @@
-# spring_mvc_advanced
+# inflearn spring_mvc_part2 study
