@@ -1,11 +1,16 @@
 package springmvc.advanced.basic;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +51,52 @@ public class BasicController {
         model.addAttribute("userMap", map);
 
         return "basic/variable";
+    }
+
+    @GetMapping("/basic-objects")
+    public String basicObjects(Model model, HttpServletRequest request,
+                               HttpServletResponse response, HttpSession session) {
+        /**
+         * 스프링 부트 3.0 부터는 타임리프 기본 객체를 제공하지 않는다. 사용하려면 직접 Model 에 담아야함
+         */
+        session.setAttribute("sessionData", "Hello Session");
+        model.addAttribute("request", request);
+        model.addAttribute("response", response);
+        model.addAttribute("servletContext", request.getServletContext());
+        return "basic/basic-objects";
+    }
+
+    @Component("helloBean") //스프링 빈 접근가능
+    static class HelloBean {
+        public String hello(String data) {
+            return "Hello " + data;
+        }
+    }
+
+    @GetMapping("/date")
+    public String date(Model model) {
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        return "basic/date";
+    }
+
+    @GetMapping("/link")
+    public String link(Model model) {
+        model.addAttribute("param1", "data1");
+        model.addAttribute("param2", "data2");
+        return "basic/link";
+    }
+
+    @GetMapping("/literal")
+    public String literal(Model model) {
+        model.addAttribute("data", "Spring!");
+        return "basic/literal";
+    }
+
+    @GetMapping("/operation")
+    public String operation(Model model) {
+        model.addAttribute("nullData", null);
+        model.addAttribute("data", "Spring!");
+        return "basic/operation";
     }
 
     @Data
