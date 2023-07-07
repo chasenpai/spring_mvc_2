@@ -5,15 +5,16 @@
   <title>Title</title>
 </head>
 <body>
-<h1>URL 링크</h1>
-<ul>
-  <li><a th:href="@{/hello}">basic url</a></li>
-  <!--쿼리 파라미터 : ()에 있는 부분은 쿼리 파라미터로 처리-->
-  <li><a th:href="@{/hello(param1=${param1}, param2=${param2})}">hello query param</a></li>
-  <!--경로 변수 : URL 경로상에 변수가 있으면()에 있는 부분은 경로 변수로 처리-->
-  <li><a th:href="@{/hello/{param1}/{param2}(param1=${param1}, param2=${param2})}">path variable</a></li>
-  <li><a th:href="@{/hello/{param1}(param1=${param1}, param2=${param2})}">path variable + query parameter</a></li><!--함께 사용-->
 
-</ul>
+  <h1>URL 링크</h1>
+  <ul>
+    <li><a th:href="@{/hello}">basic url</a></li>
+    <!--쿼리 파라미터 : ()에 있는 부분은 쿼리 파라미터로 처리-->
+    <li><a th:href="@{/hello(param1=${param1}, param2=${param2})}">hello query param</a></li>
+    <!--경로 변수 : URL 경로상에 변수가 있으면()에 있는 부분은 경로 변수로 처리-->
+    <li><a th:href="@{/hello/{param1}/{param2}(param1=${param1}, param2=${param2})}">path variable</a></li>
+    <li><a th:href="@{/hello/{param1}(param1=${param1}, param2=${param2})}">path variable + query parameter</a></li><!--함께 사용-->
+  </ul>
+
 </body>
 </html>

@@ -5,18 +5,20 @@
   <title>Title</title>
 </head>
 <body>
-<h1>리터럴</h1>
-<ul>
-  <!--
-    문자리터럴은 항상 작은 땅모표로 감싸야 한다.
-    하지만 공백없이 이어진 문자리터럴은 생략할 수 있다
-  -->
-  <!--주의! 다음 주석을 풀면 예외가 발생함-->
-  <!-- <li>"hello world!" = <span th:text="hello world!"></span></li>-->
-  <li>'hello' + ' world!' = <span th:text="'hello' + ' world!'"></span></li>
-  <li>'hello world!' = <span th:text="'hello world!'"></span></li>
-  <li>'hello ' + ${data} = <span th:text="'hello ' + ${data}"></span></li>
-  <li>리터럴 대체 |hello ${data}| = <span th:text="|hello ${data}|"></span></li>
-</ul>
+
+  <h1>리터럴</h1>
+  <ul>
+    <!--
+      문자리터럴은 항상 작은 땅모표로 감싸야 한다.
+      하지만 공백없이 이어진 문자리터럴은 생략할 수 있다
+    -->
+    <!--주의! 다음 주석을 풀면 예외가 발생함-->
+    <!-- <li>"hello world!" = <span th:text="hello world!"></span></li>-->
+    <li>'hello' + ' world!' = <span th:text="'hello' + ' world!'"></span></li>
+    <li>'hello world!' = <span th:text="'hello world!'"></span></li>
+    <li>'hello ' + ${data} = <span th:text="'hello ' + ${data}"></span></li>
+    <li>리터럴 대체 |hello ${data}| = <span th:text="|hello ${data}|"></span></li>
+  </ul>
+
 </body>
 </html>
