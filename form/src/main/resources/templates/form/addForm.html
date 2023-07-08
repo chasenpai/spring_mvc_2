@@ -35,15 +35,42 @@
 
         <hr class="my-4">
 
+        <!-- single checkbox -->
+        <div>판매 여부</div>
+        <div>
+            <div class="form-check">
+                <input type="checkbox" th:field="*{open}" class="form-check-input">
+                <!--
+                    체크 해제 인식을 위한 히든 필드 추가
+                    - 체크박스는 선택이 안되면 클라이언트에서 서버로 값 자체를 보내지 않는다.
+                    - 수정의 경우 상황에 따라 이 방식이 문제될 수 있는데, 사용자가 의도적으로 체크된 값을 체크 해제해도
+                    - 아무런 값도 넘어가지 않기 때문에 서버 구현에 따라 값이 오지 않은 것으로 판단해서 값을 변경하지
+                    - 않을 수 있다. 스프링 MVC 는 이를 해결 하기 위한 약간의 트릭을 사용하는데, 기존 체크 박스 이름 앞에
+                    - 언더스코어를 붙여 전송하면 체크를 해제했다고 인식할 수 있다. 예) _open
+                    - 타임리프 th:field 사용 시 생략 가능 > 타임리프가 생성해줌
+                 -->
+<!--                <input type="hidden" name="_open" value="on"/>-->
+                <label for="open" class="form-check-label">판매 오픈</label>
+            </div>
+        </div>
+
+        <!-- multi checkbox -->
+        <div>
+            <div>등록 지역</div>
+            <div th:each="region : ${regions}" class="form-check form-check-inline">
+                <input type="checkbox" th:field="*{regions}" th:value="${region.key}" class="form-check-input">
+                <!-- id 는 중복되면 안되기 때문에 each 루프 안에서 임의로 숫자를 뒤에 붙여준다 -->
+                <label th:for="${#ids.prev('regions')}" th:text="${region.value}" class="form-check-label">서울</label>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
                 <button class="w-100 btn btn-primary btn-lg" type="submit">상품 등록</button>
             </div>
             <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg"
-                        onclick="location.href='items.html'"
-                        th:onclick="|location.href='@{/form/items}'|"
-                        type="button">취소</button>
+                <button class="w-100 btn btn-secondary btn-lg" onclick="location.href='items.html'"
+                        th:onclick="|location.href='@{/form/items}'|" type="button">취소</button>
             </div>
         </div>
 
