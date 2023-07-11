@@ -32,4 +32,10 @@ public class ItemServiceApplication {
 	 * message 라는 이름이 기본으로 등록된다. message_en.properties 이런 식으로 파일만 등록하면 자동으로 인식됌
 	 */
 
+	/**
+	 * LocaleResolver
+	 * - 스프링은 locale 선택 방식을 변경할 수 있도록 LocaleResolver 인터페이스를 제공한다
+	 * - 기본적으로 Accept-Language 를 활용하는 AcceptHeaderLocaleResolver 를 사용한다
+	 */
+
 }
