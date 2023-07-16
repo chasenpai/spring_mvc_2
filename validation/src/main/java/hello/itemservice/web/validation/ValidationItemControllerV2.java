@@ -92,7 +92,7 @@ public class ValidationItemControllerV2 {
         return "redirect:/validation/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult,
                             RedirectAttributes redirectAttributes, Model model) {
 
@@ -128,6 +128,99 @@ public class ValidationItemControllerV2 {
                 bindingResult.addError(new ObjectError("globalError", null, null,
                         "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재 값 = " + resultPrice));
 
+            }
+        }
+
+        if(bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "validation/v2/addForm";
+        }
+
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    //@PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult,
+                            RedirectAttributes redirectAttributes, Model model) {
+
+        if(!StringUtils.hasText(item.getItemName())){
+            /**
+             * codes : 메세지 코드는 하나가 아니라 배열로 여러 값을 전달 할 수 있고 순서대로 매칭된다
+             * arguments : 메세지 코드에 치환할 값을 전달한다
+             */
+            bindingResult.addError(new FieldError(
+                    "item", "itemName", item.getItemName(),
+                    false, new String[]{"required.item.itemName"}, null, null));
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.addError(new FieldError(
+                    "item", "price", item.getPrice(),
+                    false, new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
+        }
+        if(item.getQuantity() == null || item.getQuantity() > 9999){
+            bindingResult.addError(new FieldError(
+                    "item", "quantity", item.getQuantity(),
+                    false, new String[]{"max.item.quantity"}, new Object[]{9999}, null));
+        }
+
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.addError(new ObjectError("globalError", new String[]{"totalPriceMin"},
+                        new Object[]{10000, resultPrice}, null));
+
+            }
+        }
+
+        if(bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "validation/v2/addForm";
+        }
+
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    @PostMapping("/add")
+    public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult,
+                            RedirectAttributes redirectAttributes, Model model) {
+
+        //BindingResult 는 어떤 객체를 대상으로 검증하는지 이미 target 을 알고있다
+        log.info("objectName = {}", bindingResult.getObjectName());
+        log.info("target = {}", bindingResult.getTarget());
+
+        /**
+         * rejectValue()
+         * - field : 오류 필드명
+         * - errorCode : 오류 코드(메세지에 등록된 코드가 아님)
+         * - errorArgs : 오류 메세지 치환 값
+         * - defaultMessage : 오류 메세지를 찾을 수 없을 때 기본 메세지
+         */
+        if(!StringUtils.hasText(item.getItemName())){
+            /**
+             * 만약 required 라는 메세지만 있으면 해당 메세지를 선택해서 사용한다
+             * 그러나 required.item.itemName 과 같이 객체명과 필드명을 조합한 세밀한 메세지 코드가 있으면
+             * 해당 메세지를 높은 우선순위로 사용한다
+             * 마치 new String[]{"required.item.itemName, "required"} 와 같이 동작한다          
+             */
+            bindingResult.rejectValue("itemName", "required");
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+        }
+        if(item.getQuantity() == null || item.getQuantity() > 9999){
+            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
+        }
+
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
 
