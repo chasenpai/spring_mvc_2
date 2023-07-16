@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -206,10 +207,14 @@ public class ValidationItemControllerV2 {
              * 만약 required 라는 메세지만 있으면 해당 메세지를 선택해서 사용한다
              * 그러나 required.item.itemName 과 같이 객체명과 필드명을 조합한 세밀한 메세지 코드가 있으면
              * 해당 메세지를 높은 우선순위로 사용한다
-             * 마치 new String[]{"required.item.itemName, "required"} 와 같이 동작한다          
+             * 마치 new String[]{"required.item.itemName, "required"} 와 같이 동작한다
              */
             bindingResult.rejectValue("itemName", "required");
         }
+
+        //단순한 기능 제공
+        //ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
+
         if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
             bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
         }
@@ -223,6 +228,13 @@ public class ValidationItemControllerV2 {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
+
+        /**
+         * 1. rejectValue() 호출
+         * 2. MessageCodesResolver 를 사용해서 검증 오류 코드로 메세지 코드를 작성
+         * 3. new FieldError() 를 생성하면서 메세지 코드들을 보관
+         * 4. th:errors 에서 메세지 코드들로 메세지를 순서대로 메세지에서 찾고 노출
+         */
 
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
