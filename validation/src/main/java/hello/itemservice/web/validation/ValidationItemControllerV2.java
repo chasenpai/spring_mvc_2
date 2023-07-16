@@ -44,10 +44,15 @@ public class ValidationItemControllerV2 {
         model.addAttribute("item", new Item());
         return "validation/v2/addForm";
     }
-
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, //파라미터 위치 주의
                           RedirectAttributes redirectAttributes, Model model) {
+
+        /**
+         * 만약 @ModelAttribute 에 바인딩 시 타입 오류가 발생한다면?
+         * - BindingResult 가 없으면 400 오류가 발생. 컨트롤러가 호출되지 않고 오류 페이지로 이동
+         * - BindingResult 가 있으면 오류 정보 FieldError 를 담아서 컨트롤러를 정상 호출
+         */
 
         if(!StringUtils.hasText(item.getItemName())){
             //필드에 오류가 있으면 FieldError 객체를 생성해서 bindingResult 에 담아둔다
@@ -81,6 +86,56 @@ public class ValidationItemControllerV2 {
         }
 
         //성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult,
+                            RedirectAttributes redirectAttributes, Model model) {
+
+        /**
+         * objectName : 오류가 발생한 객체 이름
+         * field : 오류 필드
+         * rejectedValue : 사용자가 입력된 값(거절된 값)
+         * bindingFailure : 타입 오류 같은 바인딩 실패인지, 검증 실패인지 구분 값
+         * codes : 메세지 코드
+         * arguments : 메세지에 사용하는 인자
+         * defaultMessage : 기본 오류 메세지
+         */
+        if(!StringUtils.hasText(item.getItemName())){
+            //rejectedValue 로 오류 발생시 사용자 입력 값을 유지할 수 있다
+            bindingResult.addError(new FieldError(
+                    "item", "itemName", item.getItemName(),
+                    false, null, null, "상품 이름은 필수 입니다."));
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.addError(new FieldError(
+                    "item", "price", item.getPrice(),
+                    false, null, null, "가격은 1,000원 이상 1,000,000원 이하 까지 허용합니다."));
+        }
+        if(item.getQuantity() == null || item.getQuantity() > 9999){
+            bindingResult.addError(new FieldError(
+                    "item", "quantity", item.getQuantity(),
+                    false, null, null, "수량은 최대 9,999 까지 허용합니다."));
+        }
+
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.addError(new ObjectError("globalError", null, null,
+                        "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재 값 = " + resultPrice));
+
+            }
+        }
+
+        if(bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "validation/v2/addForm";
+        }
+
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
