@@ -15,7 +15,10 @@ public class LogFilter implements Filter { //필터를 사용하려면 필터 �
         log.info("log filter init");
     }
 
-    //HTTP 요청이 오면 doFilter 가 호출된다
+    /**
+     * HTTP 요청이 오면 doFilter 가 호출된다
+     * 필터 흐름 - HTTP 요청 > WAS > 필터 > 서블릿 > 컨트롤러
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("log filter doFilter");
