@@ -18,6 +18,9 @@ public class WebServerCustomizer implements WebServerFactoryCustomizer<Configura
      * 1. 뷰 템플릿 - resources/templates/error/500.html
      * 2. 정적 리소스 - resources/static/error/400.html
      * 3. 적용 대상이 없을 때 뷰이름 error - resources/templates/error.html
+     *
+     * Accept Header 의 값이 text/html 인 경우 뷰를 제공하고,
+     * application/json 일 경우 ResponseEntity 로 JSON 데이터 반환
      */
 
     @Override
